@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://badxobdhyitxs"]
+
+[node name="PhoneView" type="SubViewport" unique_id=47459309]
+disable_3d = true
+size = Vector2i(288, 512)

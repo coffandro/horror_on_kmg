@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cy4i0fiycjh4f"]
+
+[ext_resource type="PackedScene" uid="uid://bhxid0aq6ant6" path="res://models/suzanne.blend" id="1_t57k1"]
+[ext_resource type="Script" uid="uid://dvr4b66hkyip7" path="res://entities/suzanne/Suzanne.cs" id="1_ua2p3"]
+
+[node name="Suzanne" type="Node3D" unique_id=1345434157 node_paths=PackedStringArray("target")]
+script = ExtResource("1_ua2p3")
+target = NodePath("suzanne")
+speed = 2.0
+
+[node name="suzanne" parent="." unique_id=238784847 instance=ExtResource("1_t57k1")]

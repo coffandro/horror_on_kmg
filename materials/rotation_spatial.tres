@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://ch5efo3va08fs"]
+
+[ext_resource type="Shader" uid="uid://iwm1xxhdsmer" path="res://materials/rotation_spatial.gdshader" id="1_ribl0"]
+
+[resource]
+render_priority = 127
+shader = ExtResource("1_ribl0")
+shader_parameter/rotation_degrees = 0.0
+shader_parameter/overdraw_depth_limit = 0.005

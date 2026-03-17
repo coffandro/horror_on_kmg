@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://c5ofjm16mcsy"]
+
+[ext_resource type="Shader" uid="uid://bm44idmrku63p" path="res://materials/linear_volume.gdshader" id="1_8lbai"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_8lbai")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/density = 1.0

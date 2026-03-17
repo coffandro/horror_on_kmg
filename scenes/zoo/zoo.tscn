@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://bdf23j1ubpa71"]
+
+[ext_resource type="Script" uid="uid://byp82wdm7au8p" path="res://scenes/zoo/Zoo.cs" id="1_xo66e"]
+[ext_resource type="PackedScene" uid="uid://ddrjyj3duk28d" path="res://entities/player/player.tscn" id="2_pdrcw"]
+[ext_resource type="Environment" uid="uid://dbnlioqm48q5e" path="res://resources/environment.tres" id="3_c0ddb"]
+
+[node name="Zoo" type="Node3D" unique_id=1003242120]
+script = ExtResource("1_xo66e")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1608295298]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+use_collision = true
+size = Vector3(10, 1, 10)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=1754660289]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
+use_collision = true
+size = Vector3(10, 1, 10)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="." unique_id=1967254537]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1.5, 0)
+use_collision = true
+size = Vector3(1, 3, 10)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="." unique_id=1316267931]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1.5, 0)
+use_collision = true
+size = Vector3(1, 3, 10)
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="." unique_id=2097687149]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1.5, 0)
+use_collision = true
+size = Vector3(1, 3, 10)
+
+[node name="CSGBox3D7" type="CSGBox3D" parent="." unique_id=26823342]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.9670125e-07, 1.5, 4.5)
+use_collision = true
+size = Vector3(1, 3, 10)
+
+[node name="CSGBox3D8" type="CSGBox3D" parent="." unique_id=2018795287]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -1.9670125e-07, 1.5, -4.5)
+use_collision = true
+size = Vector3(1, 3, 10)
+
+[node name="Player" parent="." unique_id=1548200856 instance=ExtResource("2_pdrcw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1114546868]
+environment = ExtResource("3_c0ddb")

@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://tp1txwrusbem"]
+
+[ext_resource type="Shader" uid="uid://doshafivygi4o" path="res://materials/always_on_top.gdshader" id="1_h0erb"]
+
+[resource]
+render_priority = 127
+shader = ExtResource("1_h0erb")

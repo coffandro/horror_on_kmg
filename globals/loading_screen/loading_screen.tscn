@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://cwnl2pktxbq6"]
+
+[ext_resource type="Script" uid="uid://cx4jbe4lwda1t" path="res://globals/loading_screen/LoadingScreen.cs" id="1_ebvlq"]
+[ext_resource type="PackedScene" uid="uid://badxobdhyitxs" path="res://models/phone_view.tscn" id="2_6mrs6"]
+[ext_resource type="PackedScene" uid="uid://b4aclvkfu83m" path="res://ui/loading_screen/loading_screen.tscn" id="3_wguob"]
+
+[node name="LoadingScreen" type="Node3D" unique_id=1673435929 node_paths=PackedStringArray("camera", "subViewport", "loadBar", "label")]
+process_mode = 3
+script = ExtResource("1_ebvlq")
+camera = NodePath("LoadingCamera")
+subViewport = NodePath("PhoneView")
+cameraDistance = 0.075
+loadBar = NodePath("PhoneView/LoadingScreen/PanelContainer/MarginContainer/CenterContainer/VBoxContainer/ProgressBar")
+label = NodePath("PhoneView/LoadingScreen/PanelContainer/MarginContainer/CenterContainer/VBoxContainer/Label")
+
+[node name="LoadingCamera" type="Camera3D" parent="." unique_id=1955120087]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+
+[node name="PhoneView" parent="." unique_id=47459309 instance=ExtResource("2_6mrs6")]
+size = Vector2i(512, 295)
+
+[node name="LoadingScreen" parent="PhoneView" unique_id=97784390 instance=ExtResource("3_wguob")]
+
+[editable path="PhoneView/LoadingScreen"]

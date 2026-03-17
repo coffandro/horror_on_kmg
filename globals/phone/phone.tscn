@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://b0ohxr4t1fmp5"]
+
+[ext_resource type="Script" uid="uid://c3n3v23edtyh3" path="res://globals/phone/Phone.cs" id="1_lr631"]
+[ext_resource type="PackedScene" uid="uid://bfnvx58od5i44" path="res://models/phone.blend" id="2_kvhyo"]
+[ext_resource type="Texture2D" uid="uid://ccm4p2f8aa4xt" path="res://textures/flashlight.jpg" id="4_7dg5q"]
+[ext_resource type="Material" uid="uid://ch5efo3va08fs" path="res://materials/rotation_spatial.tres" id="4_dkynj"]
+[ext_resource type="Shader" uid="uid://bm44idmrku63p" path="res://materials/linear_volume.gdshader" id="5_81e8n"]
+[ext_resource type="Environment" uid="uid://dbnlioqm48q5e" path="res://resources/environment.tres" id="5_dkynj"]
+[ext_resource type="PackedScene" uid="uid://cy4i0fiycjh4f" path="res://entities/suzanne/suzanne.tscn" id="6_54g0c"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_54g0c"]
+render_priority = 0
+shader = ExtResource("5_81e8n")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/density = 0.015
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7dg5q"]
+top_radius = 1.35
+bottom_radius = 0.01
+height = 2.5
+
+[sub_resource type="QuadMesh" id="QuadMesh_kvhyo"]
+size = Vector2(0.065, 0.115)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_81e8n"]
+points = PackedVector3Array(0.038, 0.063, 0, -0.037, 0.063, 0, -0.037, -0.062, 0, 0.038, -0.062, 0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ksyav"]
+
+[node name="Phone" type="Node3D" unique_id=1961224899 node_paths=PackedStringArray("phone", "quadMesh", "phoneMesh", "light")]
+process_mode = 3
+script = ExtResource("1_lr631")
+screenPosition = Vector2(0.5, 0.5)
+distanceFromcamera = 0.2
+rotationSpeed = 5.0
+maxScreenDrift = 0.1
+phone = NodePath("Pivot")
+quadMesh = NodePath("Pivot/QuadMesh")
+phoneMesh = NodePath("Pivot/Cube")
+light = NodePath("Pivot/Spot")
+processProcess = 1
+
+[node name="Pivot" parent="." unique_id=131906124 instance=ExtResource("2_kvhyo")]
+
+[node name="Cube" parent="Pivot" index="0" unique_id=520387755]
+transform = Transform3D(1, 1.7462298e-08, 3.7252903e-09, 1.792796e-08, 1, -7.450581e-09, -7.450581e-09, -7.450581e-09, 0.99999994, 0, 0, 0)
+surface_material_override/2 = ExtResource("4_dkynj")
+
+[node name="Spot" parent="Pivot" index="1" unique_id=847354393]
+transform = Transform3D(1, 0, 0, 0, -1, -9.482844e-09, 0, 9.482844e-09, -1, -0.012, 0.036000002, 0.010297709)
+light_energy = 1.0
+light_volumetric_fog_energy = 8.0
+light_projector = ExtResource("4_7dg5q")
+shadow_enabled = true
+spot_angle = 38.0
+
+[node name="LightColumn" type="MeshInstance3D" parent="Pivot/Spot" index="0" unique_id=1840496996]
+transform = Transform3D(1, 0, 0, 0, 5.319423e-08, 1, 0, -1, 5.319423e-08, 0, 0, -1.25)
+material_override = SubResource("ShaderMaterial_54g0c")
+mesh = SubResource("CylinderMesh_7dg5q")
+
+[node name="QuadMesh" type="MeshInstance3D" parent="Pivot" unique_id=1842695713]
+mesh = SubResource("QuadMesh_kvhyo")
+
+[node name="Area3D" type="Area3D" parent="Pivot" unique_id=1712642265]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.005)
+collision_layer = 2
+input_capture_on_drag = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pivot/Area3D" unique_id=1259261476]
+shape = SubResource("ConvexPolygonShape3D_81e8n")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1203421349]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1853616)
+mesh = SubResource("BoxMesh_ksyav")
+
+[node name="Suzanne" parent="MeshInstance3D" unique_id=1345434157 instance=ExtResource("6_54g0c")]
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 0, 1, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=802716998]
+environment = ExtResource("5_dkynj")
+
+[connection signal="input_event" from="Pivot/Area3D" to="." method="_on_area_3d_input_event"]
+[connection signal="mouse_entered" from="Pivot/Area3D" to="." method="_on_area_3d_mouse_entered"]
+[connection signal="mouse_exited" from="Pivot/Area3D" to="." method="_on_area_3d_mouse_exited"]
+
+[editable path="Pivot"]
