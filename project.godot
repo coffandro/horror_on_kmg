@@ -21,6 +21,10 @@ Phone="*uid://b0ohxr4t1fmp5"
 LoadingManager="*uid://bt1e741lf3lqs"
 LoadingScreen="*uid://cwnl2pktxbq6"
 
+[debug_draw_3d]
+
+settings/addon_root_folder="res://addons/debug_draw_3d"
+
 [dotnet]
 
 project/assembly_name="Horror on KMG"

@@ -44,7 +44,7 @@ public partial class Phone : Node3D {
 	}
 
 	// normalized screen position (0-1)
-	[Export] public float distanceFromcamera = 0.5f;
+	[Export] public float distanceFromCamera = 0.5f;
 
 	[Export] public float lerpSpeed = 5.0f;
 	[Export] public float rotationSpeed = 7.5f;
@@ -62,6 +62,7 @@ public partial class Phone : Node3D {
 	[Export] public MeshInstance3D phoneMesh;
 	[Export] public Node3D light;
 	[Export] public ProcessingTypeEnum processProcess;
+	[Export] public Node3D debugPointer;
 
 	private SubViewport subViewport;
 	private bool mouseInViewport = false;
@@ -220,31 +221,28 @@ public partial class Phone : Node3D {
 			screenPosition.Y * viewportSize.Y
 		);
 
-		// Get ray from camera through screen position
-		Vector3 rayOrigin = camera.ProjectRayOrigin(screenPixel);
+		// Get ray direction from camera through screen position
 		Vector3 rayDir = camera.ProjectRayNormal(screenPixel);
 
-		// Target position in world space
-		Vector3 targetPos = rayOrigin + rayDir * distanceFromcamera;
+		// Target position in world space (from camera position, not near plane)
+		Vector3 targetPos = camera.GlobalPosition + rayDir * distanceFromCamera;
 
 		// Target rotation: blend between camera orientation and facing camera center
 		Basis cameraBasis = camera.GlobalBasis;
-		Vector3 toCamera = (camera.GlobalPosition - targetPos).Normalized();
-		Vector3 up = cameraBasis.Y;
-		Basis lookBasis = Basis.LookingAt(toCamera, up);
 		Quaternion cameraQuat = new Quaternion(cameraBasis);
 		Basis offsetBasis = Basis.FromEuler(
 			rotationOffsetDegrees * Mathf.DegToRad(1.0f)
 		);
 		Basis finalBasis = new Basis(cameraQuat) * offsetBasis;
 		Quaternion targetRot = new Quaternion(finalBasis);
+		
+		//debugPointer.GlobalPosition =  targetPos;
 
-		// Smooth position (clamp factor to prevent overshoot)
-		float posFactor = Mathf.Min(lerpSpeed * delta, 1f);
-		Vector3 newPos = phone.GlobalPosition.Lerp(
-			targetPos,
-			posFactor
-		);
+		// Smooth position (exponential decay — higher lerpSpeed = faster catch-up, no overshoot)
+		float posFactor = 1f - Mathf.Exp(-lerpSpeed * delta);
+		Vector3 newPos = posFactor >= 0.999f
+			? targetPos
+			: phone.GlobalPosition.Lerp(targetPos, posFactor);
 
 		// Clamp in screen space so the phone always stays near the corner
 		if (maxScreenDrift > 0f) {
@@ -256,7 +254,7 @@ public partial class Phone : Node3D {
 				Vector2 clampedPixel = clampedScreen * viewportSize;
 				Vector3 clampRayOrigin = camera.ProjectRayOrigin(clampedPixel);
 				Vector3 clampRayDir = camera.ProjectRayNormal(clampedPixel);
-				newPos = clampRayOrigin + clampRayDir * distanceFromcamera;
+				newPos = clampRayOrigin + clampRayDir * distanceFromCamera;
 			}
 		}
 

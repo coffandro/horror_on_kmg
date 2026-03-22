@@ -5,8 +5,6 @@
 [ext_resource type="Texture2D" uid="uid://ccm4p2f8aa4xt" path="res://textures/flashlight.jpg" id="4_7dg5q"]
 [ext_resource type="Material" uid="uid://ch5efo3va08fs" path="res://materials/rotation_spatial.tres" id="4_dkynj"]
 [ext_resource type="Shader" uid="uid://bm44idmrku63p" path="res://materials/linear_volume.gdshader" id="5_81e8n"]
-[ext_resource type="Environment" uid="uid://dbnlioqm48q5e" path="res://resources/environment.tres" id="5_dkynj"]
-[ext_resource type="PackedScene" uid="uid://cy4i0fiycjh4f" path="res://entities/suzanne/suzanne.tscn" id="6_54g0c"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_54g0c"]
 render_priority = 0
@@ -25,20 +23,22 @@ size = Vector2(0.065, 0.115)
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_81e8n"]
 points = PackedVector3Array(0.038, 0.063, 0, -0.037, 0.063, 0, -0.037, -0.062, 0, 0.038, -0.062, 0)
 
-[sub_resource type="BoxMesh" id="BoxMesh_ksyav"]
+[sub_resource type="SphereMesh" id="SphereMesh_dkynj"]
+radius = 0.01
+height = 0.02
 
-[node name="Phone" type="Node3D" unique_id=1961224899 node_paths=PackedStringArray("phone", "quadMesh", "phoneMesh", "light")]
+[node name="Phone" type="Node3D" unique_id=1961224899 node_paths=PackedStringArray("phone", "quadMesh", "phoneMesh", "light", "debugPointer")]
 process_mode = 3
+process_priority = 100
+process_physics_priority = 100
 script = ExtResource("1_lr631")
 screenPosition = Vector2(0.5, 0.5)
-distanceFromcamera = 0.2
 rotationSpeed = 5.0
-maxScreenDrift = 0.1
 phone = NodePath("Pivot")
 quadMesh = NodePath("Pivot/QuadMesh")
 phoneMesh = NodePath("Pivot/Cube")
 light = NodePath("Pivot/Spot")
-processProcess = 1
+debugPointer = NodePath("MeshInstance3D")
 
 [node name="Pivot" parent="." unique_id=131906124 instance=ExtResource("2_kvhyo")]
 
@@ -72,13 +72,7 @@ shape = SubResource("ConvexPolygonShape3D_81e8n")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1203421349]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1853616)
-mesh = SubResource("BoxMesh_ksyav")
-
-[node name="Suzanne" parent="MeshInstance3D" unique_id=1345434157 instance=ExtResource("6_54g0c")]
-transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 0, 1, 0)
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=802716998]
-environment = ExtResource("5_dkynj")
+mesh = SubResource("SphereMesh_dkynj")
 
 [connection signal="input_event" from="Pivot/Area3D" to="." method="_on_area_3d_input_event"]
 [connection signal="mouse_entered" from="Pivot/Area3D" to="." method="_on_area_3d_mouse_entered"]

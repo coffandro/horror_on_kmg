@@ -12,6 +12,6 @@ public partial class Main : Node3D {
 		Phone.Instance.SetSubviewPort(subViewport);
 
 		Phone.Instance.screenPosition = cameraScreenPosition;
-		Phone.Instance.distanceFromcamera = cameraDistance;
+		Phone.Instance.distanceFromCamera = cameraDistance;
 	}
 }

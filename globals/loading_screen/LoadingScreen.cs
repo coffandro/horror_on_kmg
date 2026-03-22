@@ -46,7 +46,7 @@ public partial class LoadingScreen : Node3D {
 
 		Phone.Instance.screenPosition = cameraScreenPosition;
 		Phone.Instance.rotationOffsetDegrees = phoneRotation;
-		Phone.Instance.distanceFromcamera = cameraDistance;
+		Phone.Instance.distanceFromCamera = cameraDistance;
 	}
 
 	// Begin load using manager
