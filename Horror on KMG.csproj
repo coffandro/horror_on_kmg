@@ -5,4 +5,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>HorroronKMG</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="globals\state_manager\" />
+  </ItemGroup>
 </Project>

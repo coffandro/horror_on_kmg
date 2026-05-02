@@ -7,45 +7,16 @@ public enum ProcessingTypeEnum {
 	PHYSICS
 }
 
-public partial class Phone : Node3D {
-	public static Phone Instance { get; private set; }
+public struct PhoneSettings {
+	public PhoneSettings() {
 
-	[Signal] public delegate void ReachedPositionEventHandler();
-	[Signal] public delegate void ReachedRotationEventHandler();
-
-	[Export] public Camera3D camera;
-
-	private Vector2 _screenPosition = new Vector2(0.8f, 0.8f);
-	[Export]
-	public Vector2 screenPosition {
-		get {
-			return _screenPosition;
-		}
-		set {
-			reachedPosition = false;
-
-			_screenPosition = value;
-		}
 	}
 
-
-	// Rotation offset relative to camera
-	private Vector3 _rotationOffsetDegrees = new Vector3(0, 180, 0);
-	[Export]
-	public Vector3 rotationOffsetDegrees {
-		get {
-			return _rotationOffsetDegrees;
-		}
-		set {
-			reachedRotation = false;
-
-			_rotationOffsetDegrees = value;
-		}
-	}
+	public Vector2 ScreenPosition = new Vector2(0.8f, 0.8f);
+	public Vector3 RotationOffsetDegrees = new Vector3(0, 180, 0);
 
 	// normalized screen position (0-1)
-	[Export] public float distanceFromCamera = 0.5f;
-
+	[Export] public float distanceFromCamera = 0.25f;
 	[Export] public float lerpSpeed = 5.0f;
 	[Export] public float rotationSpeed = 7.5f;
 	// 0 = phone matches camera orientation, 1 = phone faces camera center
@@ -55,6 +26,75 @@ public partial class Phone : Node3D {
 	// e.g. 0.05 means the phone can't drift more than 5% of the screen from its anchor
 	[Export] public float maxScreenDrift = 0.05f;
 	[Export] public bool deepthroatingInput = true;
+}
+
+
+public partial class Phone : Node3D {
+	public static Phone Instance { get; private set; }
+
+	[Signal] public delegate void ReachedPositionEventHandler();
+	[Signal] public delegate void ReachedRotationEventHandler();
+
+	[Export] public Camera3D camera;
+
+	private PhoneSettings _settings;
+	private PhoneSettings _defaultSettings;
+
+	[Export]
+	public Vector2 ScreenPosition {
+		get {
+			return _settings.ScreenPosition;
+		}
+		set {
+			reachedPosition = false;
+
+			_settings.ScreenPosition = value;
+		}
+	}
+
+
+	// Rotation offset relative to camera
+	[Export]
+	public Vector3 RotationOffsetDegrees {
+		get {
+			return _settings.RotationOffsetDegrees;
+		}
+		set {
+			reachedRotation = false;
+
+			_settings.RotationOffsetDegrees = value;
+		}
+	}
+
+	[Export]
+	public float RotationSpeed {
+		get {
+			return _settings.rotationSpeed;
+		}
+		set {
+			_settings.rotationSpeed = value;
+		}
+	}
+
+	[Export]
+	public float LerpSpeed {
+		get {
+			return _settings.lerpSpeed;
+		}
+		set {
+			_settings.lerpSpeed = value;
+		}
+	}
+
+	[Export]
+	public float DistanceFromCamera {
+		get {
+			return _settings.distanceFromCamera;
+		}
+		set {
+			_settings.distanceFromCamera = value;
+		}
+	}
 
 	[ExportGroup("Internal")]
 	[Export] public Node3D phone;
@@ -64,6 +104,7 @@ public partial class Phone : Node3D {
 	[Export] public ProcessingTypeEnum processProcess;
 	[Export] public Node3D debugPointer;
 
+	// internal state
 	private SubViewport subViewport;
 	private bool mouseInViewport = false;
 	private Vector2? lastEventPos2D;
@@ -72,11 +113,21 @@ public partial class Phone : Node3D {
 	private bool reachedPosition, reachedRotation;
 
 	public override void _Ready() {
-		base._Ready();
 		Instance = this;
+
+		_defaultSettings = new PhoneSettings();
+
+		ResetSettings();
 	}
 
 	// TODO: Add default settings from ready function, reset for every change og ctx
+	public void ResetSettings() {
+		_settings = _defaultSettings;
+
+		SetViewportRot(0);
+		TurnLight(true);
+	}
+
 	public void TurnLight(bool enabled) {
 		light.Visible = enabled;
 	}
@@ -96,7 +147,7 @@ public partial class Phone : Node3D {
 	public override void _UnhandledInput(InputEvent @event) {
 		base._UnhandledInput(@event);
 
-		if (deepthroatingInput) {
+		if (_settings.deepthroatingInput) {
 			Type type = @event.GetType();
 			// We handle these specially later
 			Type[] ignoreTypes = [
@@ -217,44 +268,44 @@ public partial class Phone : Node3D {
 
 		// Convert normalized screen pos to pixels
 		Vector2 screenPixel = new Vector2(
-			screenPosition.X * viewportSize.X,
-			screenPosition.Y * viewportSize.Y
+			ScreenPosition.X * viewportSize.X,
+			ScreenPosition.Y * viewportSize.Y
 		);
 
 		// Get ray direction from camera through screen position
 		Vector3 rayDir = camera.ProjectRayNormal(screenPixel);
 
 		// Target position in world space (from camera position, not near plane)
-		Vector3 targetPos = camera.GlobalPosition + rayDir * distanceFromCamera;
+		Vector3 targetPos = camera.GlobalPosition + rayDir * _settings.distanceFromCamera;
 
 		// Target rotation: blend between camera orientation and facing camera center
 		Basis cameraBasis = camera.GlobalBasis;
 		Quaternion cameraQuat = new Quaternion(cameraBasis);
 		Basis offsetBasis = Basis.FromEuler(
-			rotationOffsetDegrees * Mathf.DegToRad(1.0f)
+			RotationOffsetDegrees * Mathf.DegToRad(1.0f)
 		);
 		Basis finalBasis = new Basis(cameraQuat) * offsetBasis;
 		Quaternion targetRot = new Quaternion(finalBasis);
-		
+
 		//debugPointer.GlobalPosition =  targetPos;
 
 		// Smooth position (exponential decay — higher lerpSpeed = faster catch-up, no overshoot)
-		float posFactor = 1f - Mathf.Exp(-lerpSpeed * delta);
+		float posFactor = 1f - Mathf.Exp(-_settings.lerpSpeed * delta);
 		Vector3 newPos = posFactor >= 0.999f
 			? targetPos
 			: phone.GlobalPosition.Lerp(targetPos, posFactor);
 
 		// Clamp in screen space so the phone always stays near the corner
-		if (maxScreenDrift > 0f) {
+		if (_settings.maxScreenDrift > 0f) {
 			Vector2 phoneScreen = camera.UnprojectPosition(newPos) / viewportSize;
-			Vector2 screenDrift = phoneScreen - screenPosition;
-			if (screenDrift.Length() > maxScreenDrift) {
+			Vector2 screenDrift = phoneScreen - ScreenPosition;
+			if (screenDrift.Length() > _settings.maxScreenDrift) {
 				// Pull it back toward the target along the camera's forward axis
-				Vector2 clampedScreen = screenPosition + screenDrift.Normalized() * maxScreenDrift;
+				Vector2 clampedScreen = ScreenPosition + screenDrift.Normalized() * _settings.maxScreenDrift;
 				Vector2 clampedPixel = clampedScreen * viewportSize;
 				Vector3 clampRayOrigin = camera.ProjectRayOrigin(clampedPixel);
 				Vector3 clampRayDir = camera.ProjectRayNormal(clampedPixel);
-				newPos = clampRayOrigin + clampRayDir * distanceFromCamera;
+				newPos = clampRayOrigin + clampRayDir * _settings.distanceFromCamera;
 			}
 		}
 
@@ -265,7 +316,7 @@ public partial class Phone : Node3D {
 		}
 
 		// Smooth rotation (clamp factor to prevent overshoot)
-		float rotFactor = Mathf.Min(rotationSpeed * delta, 1f);
+		float rotFactor = Mathf.Min(_settings.rotationSpeed * delta, 1f);
 		Quaternion currentGlobalRot = phone.GlobalTransform.Basis.GetRotationQuaternion();
 		Quaternion newGlobalRot = currentGlobalRot.Slerp(targetRot, rotFactor);
 		phone.GlobalBasis = new Basis(newGlobalRot);

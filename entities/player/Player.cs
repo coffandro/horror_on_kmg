@@ -14,12 +14,8 @@ public partial class Player : CharacterBody3D {
 	[Export] public Camera3D camera;
 	[Export] public SubViewport subViewport;
 	[Export] public Vector2 phoneScreenPosition = new Vector2(0.2f, 0.5f);
-	[Export] public float phoneDistance = 0.125f;
 	[Export] public float phoneRotSpeed = 7.5f;
 	[Export] public float phoneLerpSpeed = 7.5f;
-	[Export] public Vector3 phoneRotation = new Vector3(0, 180, 0);
-
-	private bool _mouseCaptured = true;
 
 	private Vector3 _movementVelocity;
 	private Vector3 _rotationTarget;
@@ -35,18 +31,16 @@ public partial class Player : CharacterBody3D {
 		base._Ready();
 
 		camera.Current = true;
+		Phone.Instance.ResetSettings();
 		Phone.Instance.camera = camera;
 		Phone.Instance.TurnLight(true);
 		Phone.Instance.SetSubviewPort(subViewport);
-		Phone.Instance.SetViewportRot(0);
 
-		Phone.Instance.rotationSpeed = phoneRotSpeed;
-		Phone.Instance.screenPosition = phoneScreenPosition;
-		Phone.Instance.rotationOffsetDegrees = phoneRotation;
-		Phone.Instance.distanceFromCamera = phoneDistance;
-		Phone.Instance.lerpSpeed = phoneLerpSpeed;
+		Phone.Instance.RotationSpeed = phoneRotSpeed;
+		Phone.Instance.ScreenPosition = phoneScreenPosition;
+		Phone.Instance.LerpSpeed = phoneLerpSpeed;
 
-		Input.MouseMode = Input.MouseModeEnum.Captured;
+		StateManager.Instance.ChangeGameState(GameState.Playing);
 	}
 
 	public override void _PhysicsProcess(double delta) {
@@ -72,7 +66,7 @@ public partial class Player : CharacterBody3D {
 	public override void _Input(InputEvent @event) {
 		base._Input(@event);
 
-		if (@event is InputEventMouseMotion && _mouseCaptured) {
+		if (@event is InputEventMouseMotion && Input.MouseMode == Input.MouseModeEnum.Captured) {
 			InputEventMouseMotion motionEven = (InputEventMouseMotion)@event;
 			_inputMouse = motionEven.Relative / mouseSensitivity;
 			HandleRotation(motionEven.Relative.X, motionEven.Relative.Y);
@@ -83,11 +77,8 @@ public partial class Player : CharacterBody3D {
 		// Mouse Capture
 		if (Input.IsActionJustPressed("mouse_capture")) {
 			Input.MouseMode = Input.MouseModeEnum.Captured;
-			_mouseCaptured = true;
 		} else if (Input.IsActionJustPressed("mouse_capture_exit")) {
 			Input.MouseMode = Input.MouseModeEnum.Visible;
-			_mouseCaptured = true;
-
 			_inputMouse = Vector2.Zero;
 		}
 

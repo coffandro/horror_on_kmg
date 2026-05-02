@@ -6,7 +6,7 @@ public partial class LoadingScreen : Node3D {
 	[Export] public Camera3D camera;
 	[Export] public SubViewport subViewport;
 	[Export] public Vector2 cameraScreenPosition = new Vector2(0.5f, 0.5f);
-	[Export] public float cameraDistance = 0.125f;
+	[Export] public float cameraDistance = 0.15f;
 	[Export] public Vector3 phoneRotation = new Vector3(0, 180, 90);
 
 	[Export] public string loadingText = "Loading...";
@@ -39,14 +39,15 @@ public partial class LoadingScreen : Node3D {
 
 	void TakePhone() {
 		camera.Current = true;
+		Phone.Instance.ResetSettings();
 		Phone.Instance.camera = camera;
 		Phone.Instance.TurnLight(false);
 		Phone.Instance.SetSubviewPort(subViewport);
 		Phone.Instance.SetViewportRot(90);
 
-		Phone.Instance.screenPosition = cameraScreenPosition;
-		Phone.Instance.rotationOffsetDegrees = phoneRotation;
-		Phone.Instance.distanceFromCamera = cameraDistance;
+		Phone.Instance.ScreenPosition = cameraScreenPosition;
+		Phone.Instance.DistanceFromCamera = cameraDistance;
+		Phone.Instance.RotationOffsetDegrees = phoneRotation;
 	}
 
 	// Begin load using manager
