@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://cnby4m2opcnqs"]
+
+[ext_resource type="Script" uid="uid://ccnesd56cbqyo" path="res://ui/pause/Pause.cs" id="1_x1pg1"]
+
+[node name="Pause" type="PanelContainer" unique_id=1212457696]
+process_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_x1pg1")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1971832395]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=2119096992]
+layout_mode = 2
+
+[node name="PausedLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1883610153]
+layout_mode = 2
+theme_override_font_sizes/font_size = 80
+text = "Paused"
+horizontal_alignment = 1
+
+[node name="ReturnButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1942764477]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Return to Game"

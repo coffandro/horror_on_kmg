@@ -5,17 +5,24 @@ public partial class Player : CharacterBody3D {
 	public const float Speed = 5.0f;
 	public const float JumpVelocity = 4.5f;
 
-	[ExportSubgroup("Properties")]
 	[Export] public float moveSpeed = 5.0f;
 	[Export] public float jumpVelocity = 8f;
 	[Export] public float mouseSensitivity = 700;
 	[Export] public float gamepadSensitivity = 0.075f;
 
+	[ExportGroup("Components")]
 	[Export] public Camera3D camera;
 	[Export] public SubViewport subViewport;
-	[Export] public Vector2 phoneScreenPosition = new Vector2(0.2f, 0.5f);
-	[Export] public float phoneRotSpeed = 7.5f;
-	[Export] public float phoneLerpSpeed = 7.5f;
+	[Export] public Hud hud;
+	[Export] public Pause pause;
+
+	[ExportGroup("Pause Camera settings")]
+	[Export] public Vector2 pausePhoneScreenPosition = new Vector2(0.85f, 0.5f);
+	[Export] public float pausePhoneLerpSpeed = 5.0f;
+
+	[ExportGroup("Hud Camera settings")]
+	[Export] public Vector2 hudPhoneScreenPosition = new Vector2(0.85f, 0.75f);
+	[Export] public float hudPhoneLerpSpeed = 7.5f;
 
 	private Vector3 _movementVelocity;
 	private Vector3 _rotationTarget;
@@ -36,11 +43,7 @@ public partial class Player : CharacterBody3D {
 		Phone.Instance.TurnLight(true);
 		Phone.Instance.SetSubviewPort(subViewport);
 
-		Phone.Instance.RotationSpeed = phoneRotSpeed;
-		Phone.Instance.ScreenPosition = phoneScreenPosition;
-		Phone.Instance.LerpSpeed = phoneLerpSpeed;
-
-		StateManager.Instance.ChangeGameState(GameState.Playing);
+		SwitchPhoneMode(false);
 	}
 
 	public override void _PhysicsProcess(double delta) {
@@ -73,13 +76,37 @@ public partial class Player : CharacterBody3D {
 		}
 	}
 
+	public void SwitchPhoneMode(bool paused) {
+		if (paused) {
+			GD.Print("Switching to paused");
+			pause.Show();
+			hud.Hide();
+
+			Phone.Instance.LerpSpeed = pausePhoneLerpSpeed;
+			Phone.Instance.ScreenPosition = pausePhoneScreenPosition;
+
+			StateManager.Instance.ChangeGameState(GameState.Paused);
+		} else {
+			GD.Print("Switching to playing");
+			pause.Hide();
+			hud.Show();
+
+			Phone.Instance.LerpSpeed = hudPhoneLerpSpeed;
+			Phone.Instance.ScreenPosition = hudPhoneScreenPosition;
+
+			StateManager.Instance.ChangeGameState(GameState.Playing);
+		}
+	}
+
+	public void _on_return_button_pressed() {
+		SwitchPhoneMode(false);
+	}
+
 	private void HandleControls(float delta) {
 		// Mouse Capture
-		if (Input.IsActionJustPressed("mouse_capture")) {
-			Input.MouseMode = Input.MouseModeEnum.Captured;
-		} else if (Input.IsActionJustPressed("mouse_capture_exit")) {
-			Input.MouseMode = Input.MouseModeEnum.Visible;
+		if (Input.IsActionJustPressed("mouse_capture_exit") && Input.MouseMode == Input.MouseModeEnum.Captured) {
 			_inputMouse = Vector2.Zero;
+			SwitchPhoneMode(true);
 		}
 
 		// Movement
@@ -166,5 +193,16 @@ public partial class Player : CharacterBody3D {
 
 		_gravity = -jumpVelocity;
 		_jumping = true;
+	}
+
+	public void TeleportTo(Vector3 globalPosition) {
+		GlobalPosition = globalPosition;
+
+		// Prevent one-frame carry-over from previous movement after teleport.
+		Velocity = Vector3.Zero;
+		_movementVelocity = Vector3.Zero;
+
+		ResetPhysicsInterpolation();
+		Phone.Instance?.SnapToCurrentTarget();
 	}
 }

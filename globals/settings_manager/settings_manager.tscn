@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://ct3fyhi7op5fw"]
+
+[ext_resource type="PackedScene" uid="uid://badxobdhyitxs" path="res://models/phone_view.tscn" id="1_deit6"]
+[ext_resource type="PackedScene" uid="uid://ngogbcw30g0k" path="res://ui/settings/settings.tscn" id="2_deit6"]
+
+[node name="SettingsManager" type="Node3D" unique_id=126556049]
+
+[node name="SettingsCamera" type="Camera3D" parent="." unique_id=1677396658]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+
+[node name="PhoneView" parent="." unique_id=47459309 instance=ExtResource("1_deit6")]
+
+[node name="Settings" parent="PhoneView" unique_id=852384649 instance=ExtResource("2_deit6")]

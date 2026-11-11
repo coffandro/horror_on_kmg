@@ -258,6 +258,36 @@ public partial class Phone : Node3D {
 		}
 	}
 
+	public void SnapToCurrentTarget() {
+		if (camera == null || phone == null) {
+			return;
+		}
+
+		Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
+		Vector2 screenPixel = new Vector2(
+			ScreenPosition.X * viewportSize.X,
+			ScreenPosition.Y * viewportSize.Y
+		);
+
+		Vector3 rayDir = camera.ProjectRayNormal(screenPixel);
+		Vector3 targetPos = camera.GlobalPosition + rayDir * _settings.distanceFromCamera;
+
+		Basis cameraBasis = camera.GlobalBasis;
+		Quaternion cameraQuat = new Quaternion(cameraBasis);
+		Basis offsetBasis = Basis.FromEuler(
+			RotationOffsetDegrees * Mathf.DegToRad(1.0f)
+		);
+		Basis finalBasis = new Basis(cameraQuat) * offsetBasis;
+		Quaternion targetRot = new Quaternion(finalBasis);
+
+		phone.GlobalPosition = targetPos;
+		phone.GlobalBasis = new Basis(targetRot);
+		phone.ResetPhysicsInterpolation();
+
+		reachedPosition = false;
+		reachedRotation = false;
+	}
+
 	private void Update(float delta) {
 		if (camera == null || phone == null) {
 			GD.Print("camera or phone missing");

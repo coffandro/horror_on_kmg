@@ -5,6 +5,7 @@ public enum GameState {
 	MainMenu,
 	Settings,
 	Playing,
+	Paused,
 };
 
 public partial class StateManager : Node {
@@ -14,7 +15,7 @@ public partial class StateManager : Node {
 	}
 
 	public GameState State { get; private set; } = GameState.None;
-	
+
 	public void ChangeGameState(GameState newState) {
 		switch (newState) {
 			case GameState.None:
@@ -27,12 +28,18 @@ public partial class StateManager : Node {
 				Input.SetMouseMode(Input.MouseModeEnum.Visible);
 				break;
 			case GameState.Playing:
+				GetTree().Paused = false;
 				Input.SetMouseMode(Input.MouseModeEnum.Captured);
 				break;
+			case GameState.Paused:
+				GetTree().Paused = true;
+				Input.SetMouseMode(Input.MouseModeEnum.Visible);
+				break;
+
 			default:
 				break;
 		}
-		
+
 		State = newState;
 	}
 }

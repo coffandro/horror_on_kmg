@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://4j7kp1662xj3"]
+
+[ext_resource type="PackedScene" uid="uid://ddrjyj3duk28d" path="res://entities/player/player.tscn" id="1_puk70"]
+[ext_resource type="Environment" uid="uid://dbnlioqm48q5e" path="res://resources/environment.tres" id="2_lehf0"]
+[ext_resource type="PackedScene" uid="uid://55qiak0mtypj" path="res://models/ground_floor/001.glb" id="3_lehf0"]
+[ext_resource type="PackedScene" uid="uid://bdpd35wn0n5nu" path="res://models/ground_floor/001-004 hallway.glb" id="4_lqer4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lwbx0"]
+size = Vector3(43, 1, 20)
+
+[node name="GroundFloor" type="Node3D" unique_id=711954576]
+
+[node name="Player" parent="." unique_id=1548200856 instance=ExtResource("1_puk70")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=774814171]
+environment = ExtResource("2_lehf0")
+
+[node name="LD" type="Node3D" parent="." unique_id=722339288]
+
+[node name="001" parent="LD" unique_id=469920376 instance=ExtResource("3_lehf0")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="LD/001" unique_id=1054833766]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LD/001/StaticBody3D" unique_id=1841296485]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, -1.8, 0)
+shape = SubResource("BoxShape3D_lwbx0")
+
+[node name="Lights" type="Node3D" parent="." unique_id=1528171059]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lights" unique_id=1420809143]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
+
+[node name="001-004 hallway" parent="." unique_id=1776771740 instance=ExtResource("4_lqer4")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -17, 0, 0)

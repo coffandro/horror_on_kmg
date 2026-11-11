@@ -17,7 +17,7 @@ label = NodePath("PhoneView/LoadingScreen/PanelContainer/MarginContainer/CenterC
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 
 [node name="PhoneView" parent="." unique_id=47459309 instance=ExtResource("2_6mrs6")]
-size = Vector2i(512, 295)
+size = Vector2i(512, 288)
 
 [node name="LoadingScreen" parent="PhoneView" unique_id=97784390 instance=ExtResource("3_wguob")]
 

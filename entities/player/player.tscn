@@ -3,18 +3,17 @@
 [ext_resource type="Script" uid="uid://dh7knax6do3y5" path="res://entities/player/Player.cs" id="1_symyc"]
 [ext_resource type="PackedScene" uid="uid://badxobdhyitxs" path="res://models/phone_view.tscn" id="2_abrql"]
 [ext_resource type="PackedScene" uid="uid://chl0rv4fjcej0" path="res://ui/hud/hud.tscn" id="3_sglur"]
+[ext_resource type="PackedScene" uid="uid://cnby4m2opcnqs" path="res://ui/pause/pause.tscn" id="4_bls4j"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_symyc"]
 
-[node name="Player" type="CharacterBody3D" unique_id=1548200856 node_paths=PackedStringArray("camera", "subViewport")]
+[node name="Player" type="CharacterBody3D" unique_id=1548200856 node_paths=PackedStringArray("camera", "subViewport", "hud", "pause")]
 script = ExtResource("1_symyc")
 mouseSensitivity = 800.0
 camera = NodePath("Camera3D")
 subViewport = NodePath("PhoneView")
-phoneScreenPosition = Vector2(0.85, 0.75)
-phoneDistance = 0.175
-phoneRotSpeed = 15.0
-phoneLerpSpeed = 5.0
+hud = NodePath("PhoneView/Hud")
+pause = NodePath("PhoneView/Pause")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=694496897]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
@@ -25,3 +24,9 @@ shape = SubResource("CapsuleShape3D_symyc")
 [node name="PhoneView" parent="." unique_id=47459309 instance=ExtResource("2_abrql")]
 
 [node name="Hud" parent="PhoneView" unique_id=500624776 instance=ExtResource("3_sglur")]
+
+[node name="Pause" parent="PhoneView" unique_id=1212457696 instance=ExtResource("4_bls4j")]
+
+[connection signal="pressed" from="PhoneView/Pause/MarginContainer/VBoxContainer/ReturnButton" to="." method="_on_return_button_pressed"]
+
+[editable path="PhoneView/Pause"]
